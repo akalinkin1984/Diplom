@@ -177,34 +177,34 @@ class Profile(models.Model):
         verbose_name_plural = "Профили пользователей"
 
 
-class ConfirmEmailToken(models.Model):
-    """Модель токена подтверждения электронной почты"""
-    objects = models.manager.Manager()
-
-    class Meta:
-        verbose_name = 'Токен подтверждения Email'
-        verbose_name_plural = 'Токены подтверждения Email'
-
-    @staticmethod
-    def generate_key():
-        """Генерирует псевдослучайный код с помощью os.urandom и binascii.hexlify"""
-        return get_token_generator().generate_token()
-
-    user = models.ForeignKey(
-        User,
-        related_name='confirm_email_tokens',
-        on_delete=models.CASCADE,
-        verbose_name="Пользователь, связанный с этим токеном сброса пароля"
-    )
-
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Когда был сгенерирован этот токен")
-
-    key = models.CharField('Ключ', max_length=64, db_index=True, unique=True)
-
-    def save(self, *args, **kwargs):
-        if not self.key:
-            self.key = self.generate_key()
-        return super(ConfirmEmailToken, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Токен сброса пароля для пользователя {self.user}"
+# class ConfirmEmailToken(models.Model):
+#     """Модель токена подтверждения электронной почты"""
+#     objects = models.manager.Manager()
+#
+#     class Meta:
+#         verbose_name = 'Токен подтверждения Email'
+#         verbose_name_plural = 'Токены подтверждения Email'
+#
+#     @staticmethod
+#     def generate_key():
+#         """Генерирует псевдослучайный код с помощью os.urandom и binascii.hexlify"""
+#         return get_token_generator().generate_token()
+#
+#     user = models.ForeignKey(
+#         User,
+#         related_name='confirm_email_tokens',
+#         on_delete=models.CASCADE,
+#         verbose_name="Пользователь, связанный с этим токеном сброса пароля"
+#     )
+#
+#     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Когда был сгенерирован этот токен")
+#
+#     key = models.CharField('Ключ', max_length=64, db_index=True, unique=True)
+#
+#     def save(self, *args, **kwargs):
+#         if not self.key:
+#             self.key = self.generate_key()
+#         return super(ConfirmEmailToken, self).save(*args, **kwargs)
+#
+#     def __str__(self):
+#         return f"Токен сброса пароля для пользователя {self.user}"
