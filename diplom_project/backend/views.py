@@ -5,8 +5,8 @@ from django.core.validators import URLValidator
 from rest_framework.views import APIView
 from yaml import load as load_yaml, Loader
 
-from backend.models import (Shop, Category, Product, ProductInfo, Parameter, ProductParameter,
-                            Order, OrderItem, Profile)
+from backend.models import (MyUser, Shop, Category, Product, ProductInfo, Parameter, ProductParameter,
+                            Order, OrderItem)
 
 
 class PartnerUpdate(APIView):
@@ -31,7 +31,7 @@ class PartnerUpdate(APIView):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Требуется войти в систему'}, status=403)
 
-        if request.user.profile.type != 'shop':
+        if request.user.type != 'shop':
             return JsonResponse({'Status': False, 'Error': 'Только для магазинов'}, status=403)
 
         url = request.data.get('url')

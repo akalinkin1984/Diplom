@@ -1,6 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django_rest_passwordreset.tokens import get_token_generator
+from authemail.models import EmailUserManager, EmailAbstractUser
 
 
 STATUS_CHOICES = (
@@ -18,13 +19,32 @@ USER_TYPE_CHOICES = (
 )
 
 
+class MyUser(EmailAbstractUser):
+    """Модель пользователя с аутентификацией по email"""
+    objects = EmailUserManager()
+    first_name = models.CharField(max_length=50, verbose_name='Имя')
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия')
+    type = models.CharField(verbose_name='Тип пользователя', choices=USER_TYPE_CHOICES, max_length=5, default='buyer')
+    city = models.CharField(max_length=50, verbose_name='Город')
+    street = models.CharField(max_length=100, verbose_name='Улица')
+    house = models.CharField(max_length=15, verbose_name='Дом')
+    structure = models.CharField(max_length=15, verbose_name='Корпус', blank=True)
+    building = models.CharField(max_length=15, verbose_name='Строение', blank=True)
+    apartment = models.CharField(max_length=15, verbose_name='Квартира', blank=True)
+    phone = models.CharField(max_length=20, verbose_name='Телефон')
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = "Пользователи"
+
+
 class Shop(models.Model):
     """Модель магазина"""
     objects = models.manager.Manager()
 
     name = models.CharField(max_length=50, verbose_name='Название магазина')
     url = models.URLField(verbose_name='Ссылка', null=True, blank=True)
-    user = models.OneToOneField(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    user = models.OneToOneField(MyUser, verbose_name='Пользователь', on_delete=models.CASCADE)
     status = models.BooleanField(verbose_name='Статус получения заказов', default=True)
 
     class Meta:
@@ -128,7 +148,7 @@ class Order(models.Model):
     """Модель заказа"""
     objects = models.manager.Manager()
 
-    user = models.ForeignKey(User, verbose_name='Пользователь', related_name='orders', on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, verbose_name='Пользователь', related_name='orders', on_delete=models.CASCADE)
     dt = models.DateTimeField(auto_now_add=True)
     status = models.CharField(verbose_name='Статус', choices=STATUS_CHOICES, max_length=15)
 
@@ -158,23 +178,23 @@ class OrderItem(models.Model):
         return f'{self.order} - {self.product}'
 
 
-class Profile(models.Model):
-    """Модель профиля пользователя"""
-    objects = models.manager.Manager()
-
-    user = models.OneToOneField(User, verbose_name='Пользователь', related_name='profile', on_delete=models.CASCADE)
-    type = models.CharField(verbose_name='Тип пользователя', choices=USER_TYPE_CHOICES, max_length=5, default='buyer')
-    city = models.CharField(max_length=50, verbose_name='Город')
-    street = models.CharField(max_length=100, verbose_name='Улица')
-    house = models.CharField(max_length=15, verbose_name='Дом')
-    structure = models.CharField(max_length=15, verbose_name='Корпус', blank=True)
-    building = models.CharField(max_length=15, verbose_name='Строение', blank=True)
-    apartment = models.CharField(max_length=15, verbose_name='Квартира', blank=True)
-    phone = models.CharField(max_length=20, verbose_name='Телефон')
-
-    class Meta:
-        verbose_name = 'Профиль пользователя'
-        verbose_name_plural = "Профили пользователей"
+# class Profile(models.Model):
+#     """Модель профиля пользователя"""
+#     objects = models.manager.Manager()
+#
+#     user = models.OneToOneField(User, verbose_name='Пользователь', related_name='profile', on_delete=models.CASCADE)
+#     type = models.CharField(verbose_name='Тип пользователя', choices=USER_TYPE_CHOICES, max_length=5, default='buyer')
+#     city = models.CharField(max_length=50, verbose_name='Город')
+#     street = models.CharField(max_length=100, verbose_name='Улица')
+#     house = models.CharField(max_length=15, verbose_name='Дом')
+#     structure = models.CharField(max_length=15, verbose_name='Корпус', blank=True)
+#     building = models.CharField(max_length=15, verbose_name='Строение', blank=True)
+#     apartment = models.CharField(max_length=15, verbose_name='Квартира', blank=True)
+#     phone = models.CharField(max_length=20, verbose_name='Телефон')
+#
+#     class Meta:
+#         verbose_name = 'Профиль пользователя'
+#         verbose_name_plural = "Профили пользователей"
 
 
 # class ConfirmEmailToken(models.Model):

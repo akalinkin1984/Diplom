@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-w2q17rg%2ja#_fgl7txylw!7m=l%1bqq6p4^*spj7j6d!+&5s$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'backend',
     'rest_framework',
     'rest_framework.authtoken',
+    'authemail',
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'backend.MyUser'
+
+EMAIL_HOST = os.getenv('AUTHEMAIL_EMAIL_HOST')
+EMAIL_PORT = os.getenv('AUTHEMAIL_EMAIL_PORT')
+
+EMAIL_HOST_USER = os.getenv('AUTHEMAIL_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('AUTHEMAIL_EMAIL_HOST_PASSWORD')
+
+EMAIL_FROM = EMAIL_HOST_USER
+EMAIL_BCC = EMAIL_HOST_USER
+
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
